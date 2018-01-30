@@ -3,18 +3,15 @@ const debug = require('debug')('app:contract-model')
 module.exports = (sequelize, DataTypes) => {
   const Contract = sequelize.define('contract', {
     address: {
-      type: DataTypes.STRING(40),
+      type: DataTypes.STRING(50),
       primaryKey: true
     },
     ownerAddress: {
-      type: DataTypes.STRING(40),
+      type: DataTypes.STRING(50),
       allowNull: false
     },
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    links: {
-      type: DataTypes.ARRAY(DataTypes.STRING)
-    },
     heroImage: DataTypes.STRING,
     coinImage: DataTypes.STRING
   })
@@ -22,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Contract.associate = (models) => {
     debug('∞ associating')
     Contract.belongsTo(models.user, { foreignKey: 'ownerAddress' })
+    Contract.hasMany(models.links)
   }
 
   return Contract
