@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = (models) => {
     debug('∞ associating')
-    User.hasMany(models.contract)
+    User.hasMany(models.contract, { foreignKey: 'ownerAddress' })
   }
 
   return User

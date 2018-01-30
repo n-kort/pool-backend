@@ -1,7 +1,7 @@
 const debug = require('debug')('app:contract-model')
 
 module.exports = (sequelize, DataTypes) => {
-  const Contract = sequelize.define('user', {
+  const Contract = sequelize.define('contract', {
     address: {
       type: DataTypes.STRING(40),
       primaryKey: true
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Contract.associate = (models) => {
     debug('∞ associating')
-    Contract.hasOne(models.user)
+    Contract.belongsTo(models.user, { foreignKey: 'ownerAddress' })
   }
 
   return Contract

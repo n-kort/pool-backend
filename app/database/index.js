@@ -1,4 +1,4 @@
-const debug = require('debug')('sql:postgres')
+const debug = require('debug')('db:postgres')
 
 const fs = require('fs')
 const path = require('path')
@@ -23,11 +23,13 @@ fs.readdirSync(path.join(__dirname, '/models')).filter((file) => {
 }).forEach((file) => {
   debug(`• schema ${file}`)
   let model = sequelize.import(path.join(__dirname, '/models', file))
+  console.log(`model, ${model}`)
   db[model.name] = model
 })
 
 Object.keys(db).forEach((modelName) => {
   if ('associate' in db[modelName]) {
+    debug(`should associate ${modelName}`)
     try {
       db[modelName].associate(db)
     } catch (err) {

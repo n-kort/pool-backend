@@ -1,6 +1,17 @@
+require('dotenv').config()
+
+const debug = require('debug')('app:index')
+const appError = require('debug')('app:ERROR')
 const Koa = require('koa')
 const app = new Koa()
-const debug = require('debug')('app:index')
+const path = require('path')
+
+const cors = require('kcors')
+const serve = require('koa-static')
+
+const bodyparser = require('koa-bodyparser')
+
+app.use(serve(path.join(__dirname, 'public')))
 
 app.use(async (ctx, next) => {
   const start = Date.now()
@@ -9,59 +20,10 @@ app.use(async (ctx, next) => {
   debug(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
-app.use(ctx => {
-  ctx.body = 'Welcom to the pool'
-})
-
-app.listen(process.env.PORT || 8080)
-
-/*
-require('dotenv').config()
-const debug = require('debug')('app:index')
-const path = require('path')
-const appError = require('debug')('app:ERROR')
-
-const Koa = require('koa')
-const app = new Koa()
-const cors = require('kcors')
-const serve = require('koa-static')
-
-const session = require('koa-session')
-// const redisStore = require('koa-redis')
-// const convert = require('koa-convert')
-
-const bodyparser = require('koa-bodyparser')
-
-const passport = require('koa-passport')
-
-app.keys = ['hhoijlkjdfa', 'hoihjhkjlkj', 'ju09hlkjlkjsdf']
-
-app.use(async (ctx, next) => {
-  let start = new Date()
-  await next()
-  let ms = new Date() - start
-  debug(`[${ctx.status}] ${ctx.method} ${ctx.url}  ~ ${ms}ms`)
-  ctx.set('X-Response-Time', `${ms} ms`)
-})
-
-app.use(serve(path.join(__dirname, '/public')))
-
-app.use(session({
-  key: 'objct',
-  overwrite: true,
-  httpOnly: true,
-  signed: true
-}, app))
-
-// auth
-app.use(passport.initialize())
-app.use(passport.session())
-require('./platform/config/auth')
-
 app.use(bodyparser())
 
 app.use(cors({
-  origin: 'https://www.objctify.io',
+  origin: 'https://*.pool.ac',
   credentials: true
 }))
 
@@ -76,31 +38,31 @@ app.use(async (ctx, next) => {
   }
 })
 
-const index = require('./platform/routes')
+const index = require('./routes')
 app.use(index.routes())
 app.use(index.allowedMethods())
 
-const search = require('./platform/routes/search')
-app.use(search.routes())
-app.use(search.allowedMethods())
-
-const projects = require('./platform/routes/projects')
-app.use(projects.routes())
-app.use(projects.allowedMethods())
-
-const accounts = require('./platform/routes/accounts')
-app.use(accounts.routes())
-app.use(accounts.allowedMethods())
-
-const files = require('./platform/routes/files')
-app.use(files.routes())
-app.use(files.allowedMethods())
-
-const httpErrors = require('./platform/routes/http-errors')
-app.use(httpErrors.routes())
-app.use(httpErrors.allowedMethods())
-
-app.listen(process.env.PORT || 3000)
+app.listen(process.env.PORT || 8080)
 debug(`App available on ${process.env.PORT}`)
-*/
 
+/*
+app.use(session({
+  key: 'objct',
+  overwrite: true,
+  httpOnly: true,
+  signed: true
+}, app))
+
+// auth
+
+app.use(bodyparser())
+
+app.use(cors({
+  origin: 'https://www.objctify.io',
+  credentials: true
+}))
+
+const index = require('./platform/routes')
+app.use(index.routes())
+app.use(index.allowedMethods())
+*/
