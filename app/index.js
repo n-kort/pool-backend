@@ -23,7 +23,9 @@ app.use(async (ctx, next) => {
 app.use(bodyparser())
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
+  // allow all for now
+  origin: '*',
+  // origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
   credentials: true
 }))
 
