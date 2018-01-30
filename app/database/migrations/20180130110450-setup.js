@@ -9,7 +9,7 @@ module.exports = {
     return Promise.all([
       queryInterface.createTable('users', {
         address: {
-          type: Sequelize.STRING(40),
+          type: Sequelize.STRING(50),
           primaryKey: true
         },
         username: {
@@ -39,11 +39,11 @@ module.exports = {
 
       queryInterface.createTable('contracts', {
         address: {
-          type: Sequelize.STRING(40),
+          type: Sequelize.STRING(50),
           primaryKey: true
         },
         ownerAddress: {
-          type: Sequelize.STRING(40),
+          type: Sequelize.STRING(50),
           allowNull: false
         },
         name: Sequelize.STRING,
