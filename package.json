@@ -1,0 +1,25 @@
+{
+  "name": "pool-backend",
+  "version": "1.0.0",
+  "description": "just a backend",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap": "ansible-playbook -i deploy/dev deploy/bootstrap.yml --extra-vars \"ansible_ssh_user=root\"",
+    "create-server": "ansible-playbook -i deploy/dev deploy/server.yml --extra-vars \"ansible_ssh_user=root\"",
+    "test": "npm test",
+    "start": "pm2 app/index",
+    "dev": "DEBUG=app:* node app/index"
+  },
+  "author": "N Kort <nics@limnerstudio.co.uk>",
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "debug": "^3.1.0",
+    "koa": "^2.4.1",
+    "pm2": "^2.9.3",
+    "sequelize": "^4.32.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.11"
+  }
+}
