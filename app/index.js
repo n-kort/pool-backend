@@ -13,7 +13,7 @@ app.use(ctx => {
   ctx.body = 'Welcom to the pool'
 })
 
-app.listen(3000)
+app.listen(process.env.PORT || 8080)
 
 /*
 require('dotenv').config()

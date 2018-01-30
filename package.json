@@ -7,7 +7,7 @@
     "bootstrap": "ansible-playbook -i deploy/dev deploy/bootstrap.yml --extra-vars \"ansible_ssh_user=root\"",
     "create-server": "ansible-playbook -i deploy/dev deploy/server.yml --extra-vars \"ansible_ssh_user=root\"",
     "test": "npm test",
-    "start": "pm2 app/index",
+    "start": "pm2 reload app/index.js",
     "dev": "DEBUG=app:* node app/index"
   },
   "author": "N Kort <nics@limnerstudio.co.uk>",
@@ -15,6 +15,7 @@
   "private": true,
   "dependencies": {
     "debug": "^3.1.0",
+    "dotenv": "^5.0.0",
     "koa": "^2.4.1",
     "pm2": "^2.9.3",
     "sequelize": "^4.32.2"
