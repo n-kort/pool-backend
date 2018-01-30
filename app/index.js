@@ -34,7 +34,6 @@ app.use(async (ctx, next) => {
     appError(err.toString())
     ctx.status = err.status || 500
     ctx.body = err.message
-    // ctx.app.emit('error', err, { user })
   }
 })
 

@@ -1,14 +1,28 @@
 const debug = require('debug')('app:router')
 const Router = require('koa-router')
+const eth = require('ethjs')
+const Wallet = require('ethers-wallet').Wallet
 
 const db = require('../database')
 // const Op = db.Sequelize.Op
 
 const app = new Router()
 
-app.get('/', (ctx, next) => {
+function checkAddress (ctx, address) {
+  if (!eth.isAddress(address)) {
+    ctx.throw(400, 'Invalid ETH address')
+  }
+}
+
+app.get('/', (ctx) => {
   debug('it the index')
   ctx.body = 'Hello, Pool Party'
+})
+
+app.get('/sig/:sig', async (ctx) => {
+  const { sig } = ctx.params
+  const address = Wallet.verifyMessage('asdf', sig)
+  ctx.body = address
 })
 
 app.get('/pools', async (ctx) => {
@@ -23,6 +37,7 @@ app.post('/pools', async (ctx) => {
 
 app.get('/pools/:address', async (ctx) => {
   const { address } = ctx.params
+  checkAddress(ctx, address)
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
   ctx.body = pool
@@ -30,6 +45,7 @@ app.get('/pools/:address', async (ctx) => {
 
 app.put('/pools/:address', async (ctx) => {
   const { address } = ctx.params
+  checkAddress(ctx, address)
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
   // verify ownerAddress & save the modifications
@@ -38,6 +54,7 @@ app.put('/pools/:address', async (ctx) => {
 
 app.delete('/pools/:address', async (ctx) => {
   const { address } = ctx.params
+  checkAddress(ctx, address)
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
   // verify ownerAddress and delete
@@ -59,6 +76,7 @@ app.post('/users', async (ctx) => {
 
 app.get('/users/:address', async (ctx) => {
   const { address } = ctx.params
+  checkAddress(ctx, address)
   const user = await db.user.findOne({ where: { address } })
   if (!user) ctx.throw(404)
   ctx.body = user
@@ -66,6 +84,7 @@ app.get('/users/:address', async (ctx) => {
 
 app.put('/users/:address', async (ctx) => {
   const { address } = ctx.params
+  checkAddress(ctx, address)
   const user = await db.user.findOne({ where: { address } })
   if (!user) ctx.throw(404)
   // modify the user
@@ -74,6 +93,7 @@ app.put('/users/:address', async (ctx) => {
 
 app.delete('/users/:address', async (ctx) => {
   const { address } = ctx.params
+  checkAddress(ctx, address)
   const user = await db.user.findOne({ where: { address } })
   if (!user) ctx.throw(404)
   // verify
