@@ -10,7 +10,7 @@ app.use(async (ctx, next) => {
 })
 
 app.use(ctx => {
-  ctx.body = 'Hello world'
+  ctx.body = 'Welcom to the pool'
 })
 
 app.listen(3000)
