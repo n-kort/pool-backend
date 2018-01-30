@@ -53,7 +53,9 @@ app.put('/pools/:address', async (ctx) => {
   // auth()
 
   const { name, description, heroImage, iconImage } = this.request.body
-  await pool.update({ name, description, heroImage, iconImage })
+  await pool.update({ name, description, heroImage, iconImage }, {
+    fields: ['name', 'description', 'heroImage', 'iconImage']
+  })
   ctx.body = pool
 })
 
