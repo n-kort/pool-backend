@@ -2,6 +2,7 @@ const debug = require('debug')('app:router')
 const Router = require('koa-router')
 const eth = require('ethjs')
 const Wallet = require('ethers-wallet').Wallet
+const fecha = require('fecha')
 
 const db = require('../database')
 // const Op = db.Sequelize.Op
@@ -21,7 +22,8 @@ app.get('/', (ctx) => {
 
 app.get('/sig/:sig', async (ctx) => {
   const { sig } = ctx.params
-  const address = Wallet.verifyMessage('asdf', sig)
+  const msg = fecha.format(new Date(), 'YYYY-MM-DD')
+  const address = Wallet.verifyMessage(msg, sig)
   ctx.body = address
 })
 
@@ -48,7 +50,10 @@ app.put('/pools/:address', async (ctx) => {
   checkAddress(ctx, address)
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
-  // verify ownerAddress & save the modifications
+  // auth()
+
+  const { name, description, heroImage, iconImage } = this.request.body
+  await pool.update({ name, description, heroImage, iconImage })
   ctx.body = pool
 })
 
@@ -71,7 +76,9 @@ app.get('/users', async (ctx) => {
 })
 
 app.post('/users', async (ctx) => {
-  ctx.body = { msg: 'ok!' }
+  const { address } = ctx.request.body
+  checkAddress(ctx, address)
+
 })
 
 app.get('/users/:address', async (ctx) => {
