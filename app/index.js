@@ -23,7 +23,7 @@ app.use(async (ctx, next) => {
 app.use(bodyparser())
 
 app.use(cors({
-  origin: 'https://*.pool.ac',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
   credentials: true
 }))
 
