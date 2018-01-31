@@ -149,9 +149,14 @@ app.post('/users', async (ctx) => {
   checkAddress(ctx, address)
 
   try {
-    ctx.body = await db.user.create({
-      address, username, email
-    })
+    let user = await db.user.findOne({ where: { address } })
+    if (user) {
+      ctx.body = user
+    } else {
+      ctx.body = await db.user.create({
+        address, username, email
+      })
+    }
   } catch (err) {
     debug(err)
     ctx.throw(500, err)
