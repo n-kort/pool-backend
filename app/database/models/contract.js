@@ -13,13 +13,30 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     heroImage: DataTypes.STRING,
-    coinImage: DataTypes.STRING
+    coinImage: DataTypes.STRING,
+    holders: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    symbol: DataTypes.STRING,
+    type: DataTypes.STRING,
+    base: DataTypes.STRING
+  }, {
+    defaultScope () {
+      return {
+        include: [
+          { model: sequelize.models.user },
+          { model: sequelize.models.user, as: 'supporters', attributes: ['address', 'username'] }
+        ]
+      }
+    }
   })
 
   Contract.associate = (models) => {
     debug('∞ associating')
     Contract.belongsTo(models.user, { foreignKey: 'ownerAddress' })
-    Contract.hasMany(models.links)
+    Contract.hasMany(models.link)
+    Contract.belongsToMany(models.user, { through: 'supporters', as: 'supporters' })
   }
 
   return Contract

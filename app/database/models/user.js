@@ -20,11 +20,18 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: true
       }
     }
+  }, {
+    defaultScope () {
+      return {
+        attributes: ['address', 'username', 'createdAt', 'updatedAt']
+      }
+    }
   })
 
   User.associate = (models) => {
     debug('∞ associating')
     User.hasMany(models.contract, { foreignKey: 'ownerAddress' })
+    User.belongsToMany(models.contract, { through: 'supporters' })
   }
 
   return User

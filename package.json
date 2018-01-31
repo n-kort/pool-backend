@@ -10,7 +10,8 @@
     "start": "pm2 start app/index.js",
     "reload": "pm2 reload index",
     "lint": "eslint --ext .js app",
-    "dev": "NODE_ENV=development DEBUG=app:* nodemon --exec 'npm run lint && node' --watch app app/index"
+    "dev": "NODE_ENV=development DEBUG=app:* nodemon --exec 'npm run lint && node' --watch app app/index",
+    "dev-db": "NODE_ENV=development DEBUG=app:*,db:* nodemon --exec 'npm run lint && node' --watch app app/index"
   },
   "author": "N Kort <nics@limnerstudio.co.uk>",
   "license": "ISC",
