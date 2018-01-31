@@ -50,12 +50,12 @@ app.put('/pools/:address', async (ctx) => {
   checkAddress(ctx, address)
 
   // check request validity
-  const { authorization } = ctx.request.headers
-  if (!authorization) ctx.throw(401)
-  const token = authorization.replace('Basic ', '')
-  const msg = fecha.format(new Date(), 'YYYY-MM-DD')
-  let signedAddress = Wallet.verifyMessage(msg, token)
-  if (signedAddress !== address) ctx.throw(401)
+  // const { authorization } = ctx.request.headers
+  // if (!authorization) ctx.throw(401)
+  // const token = authorization.replace('Basic ', '')
+  // const msg = fecha.format(new Date(), 'YYYY-MM-DD')
+  // let signedAddress = Wallet.verifyMessage(msg, token)
+  // if (signedAddress !== address) ctx.throw(401)
 
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
