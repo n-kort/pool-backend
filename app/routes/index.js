@@ -48,6 +48,14 @@ app.get('/pools/:address', async (ctx) => {
 app.put('/pools/:address', async (ctx) => {
   const { address } = ctx.params
   checkAddress(ctx, address)
+
+  // check request validity
+  const { authorization } = ctx.request.headers
+  const token = authorization.replace('Basic ', '')
+  const msg = fecha.format(new Date(), 'YYYY-MM-DD')
+  let signedAddress = Wallet.verifyMessage(msg, token)
+  if (signedAddress !== address) ctx.throw(401)
+
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
   // make sure ownerAddress matches header signature

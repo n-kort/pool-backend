@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
       return {
         include: [
           { model: sequelize.models.user },
-          { model: sequelize.models.user, as: 'supporters', attributes: ['address', 'username'] }
+          { model: sequelize.models.user, as: 'supporters', attributes: ['address', 'username'] },
+          { model: sequelize.models.link }
         ]
       }
     }
@@ -35,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   Contract.associate = (models) => {
     debug('∞ associating')
     Contract.belongsTo(models.user, { foreignKey: 'ownerAddress' })
-    Contract.hasMany(models.link)
+    Contract.hasMany(models.link, { foreignKey: 'contract' })
     Contract.belongsToMany(models.user, { through: 'supporters', as: 'supporters' })
   }
 
