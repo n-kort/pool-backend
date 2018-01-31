@@ -23,9 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     base: DataTypes.STRING,
     baseToken: DataTypes.STRING(50),
-    networkId: {
-      type: DataTypes.INTEGER
-    }
+    networkId: DataTypes.INTEGER
   }, {
     defaultScope () {
       return {

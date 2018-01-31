@@ -28,7 +28,14 @@ app.get('/', (ctx) => {
 // })
 
 app.get('/pools', async (ctx) => {
-  ctx.body = await db.contract.findAll()
+  let { networkId } = ctx.query
+  if (!networkId) networkId = 1
+  try {
+    ctx.body = await db.contract.findAll({ where: { networkId } })
+  } catch (err) {
+    debug(err)
+    ctx.throw(400)
+  }
 })
 
 app.post('/pools', async (ctx) => {
