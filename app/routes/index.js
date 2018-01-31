@@ -1,8 +1,8 @@
 const debug = require('debug')('app:router')
 const Router = require('koa-router')
 const eth = require('ethjs')
-const Wallet = require('ethers-wallet').Wallet
-const fecha = require('fecha')
+// const Wallet = require('ethers-wallet').Wallet
+// const fecha = require('fecha')
 
 const db = require('../database')
 // const Op = db.Sequelize.Op
@@ -17,24 +17,49 @@ function checkAddress (ctx, address) {
 
 app.get('/', (ctx) => {
   debug('it the index')
-  ctx.body = 'Hello, Pool Party'
+  ctx.body = '<h1>Join the pool party 🏊🏽‍♀️</h1>'
 })
 
-app.get('/sig/:sig', async (ctx) => {
-  const { sig } = ctx.params
-  const msg = fecha.format(new Date(), 'YYYY-MM-DD')
-  const address = Wallet.verifyMessage(msg, sig)
-  ctx.body = address
-})
+// app.get('/sig/:sig', async (ctx) => {
+//   const { sig } = ctx.params
+//   const msg = fecha.format(new Date(), 'YYYY-MM-DD')
+//   const address = Wallet.verifyMessage(msg, sig)
+//   ctx.body = address
+// })
 
 app.get('/pools', async (ctx) => {
   ctx.body = await db.contract.findAll()
 })
 
 app.post('/pools', async (ctx) => {
-  // const { address, owner, name, description, links, heroImage, coinImage } = ctx.request.body
-  // save it all
-  ctx.body = { msg: 'ok!' }
+  const {
+    address,
+    ownerAddress,
+    name,
+    description,
+    heroImage,
+    coinImage,
+    symbol,
+    type,
+    base,
+    links
+  } = ctx.request.body
+
+  let pool = await db.contract.create({
+    address,
+    ownerAddress,
+    name,
+    description,
+    heroImage,
+    coinImage,
+    symbol,
+    type,
+    base,
+    links
+  }, {
+    include: [{ model: db.link }]
+  })
+  ctx.body = pool
 })
 
 app.get('/pools/:address', async (ctx) => {

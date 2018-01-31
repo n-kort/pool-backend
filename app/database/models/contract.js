@@ -4,7 +4,8 @@ module.exports = (sequelize, DataTypes) => {
   const Contract = sequelize.define('contract', {
     address: {
       type: DataTypes.STRING(50),
-      primaryKey: true
+      primaryKey: true,
+      allowNull: false
     },
     ownerAddress: {
       type: DataTypes.STRING(50),
@@ -24,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     defaultScope () {
       return {
+        order: [['createdAt', 'DESC']],
         include: [
           { model: sequelize.models.user },
           { model: sequelize.models.user, as: 'supporters', attributes: ['address', 'username'] },
