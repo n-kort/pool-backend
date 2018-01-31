@@ -50,14 +50,24 @@ app.put('/pools/:address', async (ctx) => {
   checkAddress(ctx, address)
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
-  // auth()
-
-  const { name, description, heroImage, iconImage } = this.request.body
-  await pool.update({ name, description, heroImage, iconImage }, {
-    fields: ['name', 'description', 'heroImage', 'iconImage']
-  })
+  // make sure ownerAddress matches header signature
+  const allowed = ['name', 'description', 'heroImage', 'coinImage']
+  const fields = allowable(ctx.request.body, allowed)
+  await pool.update(ctx.request.body, { fields })
   ctx.body = pool
 })
+
+function allowable (obj, allowed) {
+  let remaining = []
+  for (let key of Object.keys(obj)) {
+    if (allowed.indexOf(key) < 0) {
+      delete obj[key]
+    } else {
+      remaining.push(key)
+    }
+  }
+  return remaining
+}
 
 app.delete('/pools/:address', async (ctx) => {
   const { address } = ctx.params
@@ -80,7 +90,7 @@ app.get('/users', async (ctx) => {
 app.post('/users', async (ctx) => {
   const { address } = ctx.request.body
   checkAddress(ctx, address)
-
+  ctx.body = 'um'
 })
 
 app.get('/users/:address', async (ctx) => {
