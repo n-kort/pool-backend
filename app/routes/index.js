@@ -51,6 +51,7 @@ app.put('/pools/:address', async (ctx) => {
 
   // check request validity
   const { authorization } = ctx.request.headers
+  if (!authorization) ctx.throw(401)
   const token = authorization.replace('Basic ', '')
   const msg = fecha.format(new Date(), 'YYYY-MM-DD')
   let signedAddress = Wallet.verifyMessage(msg, token)
