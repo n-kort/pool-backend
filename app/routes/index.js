@@ -42,6 +42,7 @@ app.post('/pools', async (ctx) => {
     symbol,
     type,
     base,
+    baseToken,
     links
   } = ctx.request.body
 
@@ -55,6 +56,7 @@ app.post('/pools', async (ctx) => {
     symbol,
     type,
     base,
+    baseToken,
     links
   }, {
     include: [{ model: db.link }]
