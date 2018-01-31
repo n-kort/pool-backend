@@ -46,22 +46,26 @@ app.post('/pools', async (ctx) => {
     links
   } = ctx.request.body
 
-  let pool = await db.contract.create({
-    address,
-    ownerAddress,
-    name,
-    description,
-    heroImage,
-    coinImage,
-    symbol,
-    type,
-    base,
-    baseToken,
-    links
-  }, {
-    include: [{ model: db.link }]
-  })
-  ctx.body = pool
+  try {
+    ctx.body = await db.contract.create({
+      address,
+      ownerAddress,
+      name,
+      description,
+      heroImage,
+      coinImage,
+      symbol,
+      type,
+      base,
+      baseToken,
+      links
+    }, {
+      include: [{ model: db.link }]
+    })
+  } catch (err) {
+    debug(err)
+    ctx.throw(500, err)
+  }
 })
 
 app.get('/pools/:address', async (ctx) => {
@@ -70,6 +74,26 @@ app.get('/pools/:address', async (ctx) => {
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
   ctx.body = pool
+})
+
+app.post('/pools/:address/support', async (ctx) => {
+  const { address } = ctx.params
+  const { user } = ctx.request.body
+  checkAddress(ctx, address)
+  checkAddress(ctx, user)
+
+  await db.supporter.create({
+    contractAddress: address,
+    userAddress: user
+  }).then(() => {
+    return db.contract.findOne({ where: { address } }).then((contract) => {
+      contract.increment('holders')
+    })
+  }).catch((err) => {
+    debug(err)
+    ctx.throw(500, err)
+  })
+  ctx.body = { msg: 'OK' }
 })
 
 app.put('/pools/:address', async (ctx) => {
@@ -93,18 +117,6 @@ app.put('/pools/:address', async (ctx) => {
   ctx.body = pool
 })
 
-function allowable (obj, allowed) {
-  let remaining = []
-  for (let key of Object.keys(obj)) {
-    if (allowed.indexOf(key) < 0) {
-      delete obj[key]
-    } else {
-      remaining.push(key)
-    }
-  }
-  return remaining
-}
-
 app.delete('/pools/:address', async (ctx) => {
   const { address } = ctx.params
   checkAddress(ctx, address)
@@ -124,9 +136,17 @@ app.get('/users', async (ctx) => {
 })
 
 app.post('/users', async (ctx) => {
-  const { address } = ctx.request.body
+  const { address, username, email } = ctx.request.body
   checkAddress(ctx, address)
-  ctx.body = 'um'
+
+  try {
+    ctx.body = await db.user.create({
+      address, username, email
+    })
+  } catch (err) {
+    debug(err)
+    ctx.throw(500, err)
+  }
 })
 
 app.get('/users/:address', async (ctx) => {
@@ -161,3 +181,15 @@ app.delete('/users/:address', async (ctx) => {
 })
 
 module.exports = app
+
+function allowable (obj, allowed) {
+  let remaining = []
+  for (let key of Object.keys(obj)) {
+    if (allowed.indexOf(key) < 0) {
+      delete obj[key]
+    } else {
+      remaining.push(key)
+    }
+  }
+  return remaining
+}
