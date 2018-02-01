@@ -125,14 +125,30 @@ app.put('/pools/:address', async (ctx) => {
   const fields = allowable(ctx.request.body, allowed)
   await pool.update(ctx.request.body, { fields })
   if (links && links.length) {
+    let saved = []
     for (let i = links.length - 1; i >= 0; i--) {
       if (links[i].id) {
-        links.splice(i, 1)
+        saved.push(...links.splice(i, 1))
         continue
       }
       links[i].contract = pool.address
     }
-    await db.link.bulkCreate(links)
+    for (let l of saved) {
+      delete l.createdAt
+      delete l.updatedAt
+      delete l.contract
+      await db.link.update(l, { where: { id: l.id } })
+    }
+    let indb = await pool.getLinks()
+    indb.forEach(async (il) => {
+      let e = saved.findIndex(d => d.id === il.id)
+      if (e < 0) {
+        await il.destroy()
+      }
+    })
+    if (links.length) {
+      await db.link.bulkCreate(links)
+    }
   } else {
     await pool.setLinks([])
   }
