@@ -124,11 +124,17 @@ app.put('/pools/:address', async (ctx) => {
   const { links } = ctx.request.body
   const fields = allowable(ctx.request.body, allowed)
   await pool.update(ctx.request.body, { fields })
-  if (links) {
-    for (let link of links) {
-      link.contract = pool.address
+  if (links && links.length) {
+    for (let i = links.length - 1; i >= 0; i--) {
+      if (links[i].id) {
+        links.splice(i, 1)
+        continue
+      }
+      links[i].contract = pool.address
     }
     await db.link.bulkCreate(links)
+  } else {
+    await pool.setLinks([])
   }
   ctx.body = pool
 })
