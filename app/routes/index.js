@@ -29,7 +29,7 @@ app.get('/', (ctx) => {
 
 app.get('/pools', async (ctx) => {
   let { networkId } = ctx.query
-  if (!networkId) networkId = 1
+  if (!networkId) networkId = 3
   try {
     ctx.body = await db.contract.findAll({ where: { networkId } })
   } catch (err) {
