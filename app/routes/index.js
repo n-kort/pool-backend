@@ -120,9 +120,9 @@ app.put('/pools/:address', async (ctx) => {
   const pool = await db.contract.findOne({ where: { address } })
   if (!pool) ctx.throw(404)
   // make sure ownerAddress matches header signature
-  const allowed = ['name', 'description', 'heroImage', 'coinImage']
+  const allowed = ['name', 'description', 'heroImage', 'coinImage', 'links']
   const fields = allowable(ctx.request.body, allowed)
-  await pool.update(ctx.request.body, { fields })
+  await pool.update(ctx.request.body, { fields, include: [{ model: db.like }] })
   ctx.body = pool
 })
 
