@@ -123,9 +123,12 @@ app.put('/pools/:address', async (ctx) => {
   const allowed = ['name', 'description', 'heroImage', 'coinImage']
   const { links } = ctx.request.body
   const fields = allowable(ctx.request.body, allowed)
-  await pool.update(ctx.request.body, { fields, include: [{ model: db.like }] })
+  await pool.update(ctx.request.body, { fields })
   if (links) {
-    await pool.addLinks(links)
+    for (let link of links) {
+      link.contract = pool.address
+    }
+    await db.link.bulkCreate(links)
   }
   ctx.body = pool
 })
